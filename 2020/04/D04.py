@@ -9,12 +9,7 @@ PATTERN_pid = re.compile(r"^[0-9]{9}$")
 
 def string_to_dict(string, key_val_del=':', items_del=' '):
     items = string.split(items_del)
-    # print(items)
-    # for k in items:
-    #     print(k)
     kvs_list = [kv.split(key_val_del) for kv in items] # if kv
-    # for k in kvs_list:
-    #     print(k)
     return dict(kvs_list)
 
 
@@ -22,7 +17,6 @@ def passdata_as_dict(seq: List[str]) -> List[dict]:
     result = []
     while seq:
         record = seq.pop()
-        print(record)
         result.append(string_to_dict(record))
 
     return result
@@ -39,7 +33,7 @@ def passdata_validation(passport: Dict) -> bool:
 
 def fields_validation(passport: Dict) -> bool:
     def birth_valid(byr):
-        return byr.isdigit() and 1920 <= int(byr) <= 2020
+        return byr.isdigit() and 1920 <= int(byr) <= 2002
 
     def issue_valid(iyr):
         return iyr.isdigit() and 2010 <= int(iyr) <= 2020
@@ -92,13 +86,9 @@ def n_valid_passports(passports: List[str]) -> int:
     return count
 
 
-
-
-# for r in records:
-#     print(r)
 with open('input') as f:
-    passports = [
+    batch = [
         data.strip().replace('\n', ' ') for data in f.read().split('\n\n')
         ]
 
-print(n_valid_passports(passports))
+print(n_valid_passports(batch))
