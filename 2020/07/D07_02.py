@@ -1,7 +1,5 @@
 import re
 
-pattern = re.compile(r"[1-9]{1} \w+ \w+")
-
 text2 = """shiny gold bags contain 2 dark red bags.
 dark red bags contain 2 dark orange bags.
 dark orange bags contain 2 dark yellow bags.
@@ -22,34 +20,38 @@ faded blue bags contain no other bags.
 dotted black bags contain no other bags.
 """
 
+def format_bag_rule(rule):
+     bag_total, *bag_color = rule.split(' ')
+     return int(bag_total), ' '.join(bag_color)
+
 
 with open('input') as f:
-     page = f.read().strip().splitlines()
+     rules = f.read().strip().splitlines()
 
-# page = text2.strip().splitlines()
-page = [line.split(' bags contain ') for line in page]
 
-found_colors = set()
+# rules = text2.strip().splitlines()
+rules = [rule.split(' bags contain ') for rule in rules]
+
+
+inner_bag_pattern = re.compile(r"[1-9]{1} \w+ \w+")
 bags_to_check = ["1 shiny gold"]
 suma = 0
 
 while bags_to_check:
-     bag_info = bags_to_check.pop().split(' ')
-     num = int(bag_info[0])
-     color = ' '.join([bag_info[1], bag_info[2]])
+     bag_info = bags_to_check.pop()
+     bag_total, bag_color = format_bag_rule(bag_info)
 
-     for line in page:
-          if color == line[0] and line[0] not in found_colors:
-               contain_bags = re.findall(pattern, line[1])
-               for bag in contain_bags:
-                    bag = bag.split(' ')
-                    total_num_bag = num * int(bag[0])
+     for rule in rules:
+          outer_bag, inner_bags = rule
+
+          if bag_color == outer_bag:
+
+               for bag in re.findall(inner_bag_pattern, inner_bags):
+                    num, color = format_bag_rule(bag)
+                    total_num_bag = bag_total * int(num)
                     suma += total_num_bag
-                    bag_to_check = ' '.join(
-                         [str(total_num_bag), bag[1], bag[2]]
-                         )
+                    bag_to_check = ' '.join([str(total_num_bag), color])
                     bags_to_check.append(bag_to_check)
 
-     found_colors.add(color)
 
 print(suma)
