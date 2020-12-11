@@ -1,5 +1,3 @@
-from itertools import combinations
-
 def format_input(inputpath):
     with open(f'{inputpath}') as f:
         lines = f.read().splitlines()
